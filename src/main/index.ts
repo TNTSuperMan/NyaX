@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let selectedFiles = [];
 
-    let currentUser = null; let realtimeChannel = null; let currentTimelineTab = 'foryou';
+    let realtimeChannel = null; let currentTimelineTab = 'foryou';
     let replyingTo = null;
     let newIconDataUrl = null;
     let resetIconToDefault = false;
@@ -23,62 +23,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const POSTS_PER_PAGE = 10;
 
 
-    
-    // --- 7. 認証とセッション ---
-    function goToLoginPage() { window.location.href = 'login.html'; }
-    function handleLogout() {
-        if(!confirm("ログアウトしますか？")) return;
-        // supabase.auth.signOut()を呼び出してセッションを破棄
-        supabase.auth.signOut().then(() => {
-            currentUser = null;
-            if (realtimeChannel) { supabase.removeChannel(realtimeChannel); realtimeChannel = null; }
-            window.location.hash = '#';
-            router();
-        });
-    }
-    async function checkSession() {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-        if (sessionError) {
-            console.error(sessionError);
-            DOM.connectionErrorOverlay.classList.remove('hidden');
-            return;
-        }
-
-        if (session) {
-            try {
-                const authUserId = session.user.id; // これはUUID
-                
-                // 取得した認証UUIDを使って、'uuid'カラムを検索する
-                const { data, error } = await supabase
-                    .from('user')
-                    .select('*')
-                    .eq('uuid', authUserId) // 'id'ではなく'uuid'と比較する
-                    .single();
-
-                if (error || !data) throw new Error('ユーザーデータの取得に失敗しました。');
-                
-                currentUser = data;
-
-                if (currentUser.frieze) {
-                    DOM.friezeReason.textContent = currentUser.frieze;
-                    DOM.friezeOverlay.classList.remove('hidden');
-                    return;
-                }
-
-                subscribeToChanges();
-                router();
-
-            } catch (error) {
-                console.error(error);
-                currentUser = null;
-                DOM.connectionErrorOverlay.classList.remove('hidden');
-            }
-        } else {
-            currentUser = null;
-            router();
-        }
-    }
 
     // --- 8. ポスト関連のUIとロジック ---
     function openPostModal(replyInfo = null) {
