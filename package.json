@@ -9,6 +9,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "build": "bun build --outdir=dist --minify src/*.html"
+    "build": "bun build --outdir=dist --minify src/*.html",
+    "serve": "bun src/*.html"
   }
 }
