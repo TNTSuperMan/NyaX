@@ -9,7 +9,7 @@ const server = serve({
         "/login": login,
         "/rule": rule,
     },
-    fetch: req => new Response(file(new URL(req.url).pathname.substring(1)))
+    fetch: req => new Response(file("src"+new URL(req.url).pathname))
 })
 
 console.log(`Running at ${server.url}`);
