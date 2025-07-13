@@ -10,5 +10,8 @@
   },
   "scripts": {
     "build": "bun build --outdir=dist --minify src/*.html"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2"
   }
 }
